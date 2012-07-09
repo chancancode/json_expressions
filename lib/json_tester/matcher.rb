@@ -38,7 +38,7 @@ module JsonTester
 
     private
 
-    def match_json_old(matcher, other)
+    def match_json(matcher, other)
       if matcher.is_a? Array
         match_array matcher, other
       elsif matcher.is_a? Hash
@@ -49,16 +49,6 @@ module JsonTester
         matcher === other
       else
         matcher == other
-      end
-    end
-
-    def match_json(matcher, other)
-      if match_json_old(matcher, other)
-        puts "#{matcher.inspect} matches #{other.inspect}"
-        true
-      else
-        puts "No match for #{matcher.inspect} (matched against #{other.inspect})"
-        false
       end
     end
 
