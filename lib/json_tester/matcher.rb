@@ -15,6 +15,30 @@ module JsonTester
       #   Default: []
       attr_accessor :skip_triple_equal_on
       JsonTester::Matcher.skip_triple_equal_on = []
+
+      # JsonTester::Matcher.assume_unordered_arrays (Boolean)
+      #   By default, assume arrays are unordered when not specified
+      #   Default: true
+      attr_accessor :assume_unordered_arrays
+      JsonTester::Matcher.assume_unordered_arrays = true
+
+      # JsonTester::Matcher.assume_strict_arrays (Boolean)
+      #   By default, reject arrays with extra elements when not specified
+      #   Default: true
+      attr_accessor :assume_strict_arrays
+      JsonTester::Matcher.assume_strict_arrays = true
+
+      # JsonTester::Matcher.assume_unordered_hashes (Boolean)
+      #   By default, assume hashes are unordered when not specified
+      #   Default: true
+      attr_accessor :assume_unordered_hashes
+      JsonTester::Matcher.assume_unordered_hashes = true
+
+      # JsonTester::Matcher.assume_strict_hashes (Boolean)
+      #   By default, reject hashes with extra keys when not specified
+      #   Default: true
+      attr_accessor :assume_strict_hashes
+      JsonTester::Matcher.assume_strict_hashes = true
     end
 
     def initialize(json, options = {})
@@ -55,13 +79,7 @@ module JsonTester
     def match_array(matcher, other)
       return false unless other.is_a? Array
 
-      if ! matcher.ordered? && ! matcher.unordered?
-        matcher.ordered!
-      end
-
-      if ! matcher.strict? && ! matcher.forgiving?
-        matcher.strict!
-      end
+      apply_array_defaults matcher
 
       return false if matcher.strict? && matcher.size != other.size
       return false if matcher.forgiving? && matcher.size > other.size
@@ -71,7 +89,7 @@ module JsonTester
       else
         other = other.clone
 
-        matcher.all? do |v1| 
+        matcher.all? do |v1|
           if i = other.find_index {|v2| match_json(v1,v2)}
             other.delete_at i
             true
@@ -85,19 +103,33 @@ module JsonTester
     def match_hash(matcher, other)
       return false unless other.is_a? Hash
 
-      if ! matcher.ordered? && ! matcher.unordered?
-        matcher.ordered!
-      end
-
-      if ! matcher.strict? && ! matcher.forgiving?
-        matcher.strict!
-      end
+      apply_hash_defaults matcher
 
       return false if matcher.strict? && matcher.keys.sort != other.keys.sort
       return false if matcher.forgiving? && (matcher.keys-other.keys).empty?
       return false if matcher.ordered? && matcher.keys != other.keys
 
       matcher.keys.all? { |k| match_json matcher[k], other[k] }
+    end
+
+    def apply_array_defaults(array)
+      if ! array.ordered? && ! array.unordered?
+        self.class.assume_unordered_arrays ? array.unordered! : array.ordered!
+      end
+
+      if ! array.strict? && ! array.forgiving?
+        self.class.assume_strict_arrays ? array.strict! : array.forgiving!
+      end
+    end
+
+    def apply_hash_defaults(hash)
+      if ! hash.ordered? && ! hash.unordered?
+        self.class.assume_unordered_arrays ? hash.unordered! : hash.ordered!
+      end
+
+      if ! hash.strict? && ! hash.forgiving?
+        self.class.assume_strict_arrays ? hash.strict! : hash.forgiving!
+      end
     end
 
     def matchable?(obj)
