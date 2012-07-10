@@ -41,15 +41,18 @@ module JsonTester
       JsonTester::Matcher.assume_strict_hashes = true
     end
 
+    attr_reader :last_error
+
     def initialize(json, options = {})
       defaults = {}
       @json = json
       @options = defaults.merge(options)
-      @errors = []
+      reset!
     end
 
     def =~(other)
-      match_json(@json, other)
+      reset!
+      match_json('(JSON ROOT)', @json, other)
     end
 
     def match(other)
@@ -62,54 +65,109 @@ module JsonTester
 
     private
 
-    def match_json(matcher, other)
+    def reset!
+      @last_errot = nil
+    end
+
+    def match_json(path, matcher, other)
       if matcher.is_a? Array
-        match_array matcher, other
+        match_array path, matcher, other
       elsif matcher.is_a? Hash
-        match_hash matcher, other
+        match_hash path, matcher, other
       elsif matcher.respond_to?(:match) && matchable?(matcher)
-        matcher.match(other)
+        match_obj path, matcher, other, :match
       elsif triple_equable?(matcher)
-        matcher === other
+        match_obj path, matcher, other, :===
       else
-        matcher == other
+        match_obj path, matcher, other, :==
       end
     end
 
-    def match_array(matcher, other)
-      return false unless other.is_a? Array
+    def match_obj(path, matcher, other, meth)
+      if matcher.__send__ meth, other
+        true
+      else
+        set_last_error path, "At %path%: expected #{matcher.inspect} to match #{other.inspect}"
+        return false
+      end
+    end
+
+    def match_array(path, matcher, other)
+      unless other.is_a? Array
+        set_last_error path, "%path% is not an array"
+        return false
+      end
 
       apply_array_defaults matcher
 
-      return false if matcher.strict? && matcher.size != other.size
-      return false if matcher.forgiving? && matcher.size > other.size
+      if matcher.size > other.size
+        set_last_error path, "%path% contains too few elements (#{matcher.size} expected but was #{other.size})"
+        return false
+      end
+
+      if matcher.strict? && matcher.size < other.size
+        set_last_error path, "%path% contains too many elements (#{matcher.size} expected but was #{other.size})"
+        return false
+      end
 
       if matcher.ordered?
-        matcher.zip(other).all? {|(v1,v2)| match_json(v1,v2)}
+        matcher.zip(other).each_with_index { |(v1,v2),i| return false unless match_json(make_path(path,i), v1, v2) }
       else
         other = other.clone
 
         matcher.all? do |v1|
-          if i = other.find_index {|v2| match_json(v1,v2)}
+          if i = other.find_index { |v2| match_json(nil, v1, v2) }
             other.delete_at i
             true
           else
+            set_last_error path, "%path% does not contain an element matching #{v1.inspect}"
             false
           end
         end
       end
     end
 
-    def match_hash(matcher, other)
-      return false unless other.is_a? Hash
+    def match_hash(path, matcher, other)
+      unless other.is_a? Hash
+        set_last_error path, "%path% is not a hash"
+        return false
+      end
 
       apply_hash_defaults matcher
 
-      return false if matcher.strict? && matcher.keys.sort != other.keys.sort
-      return false if matcher.forgiving? && (matcher.keys-other.keys).empty?
-      return false if matcher.ordered? && matcher.keys != other.keys
+      missing_keys = matcher.keys - other.keys
+      extra_keys   = other.keys - matcher.keys
 
-      matcher.keys.all? { |k| match_json matcher[k], other[k] }
+      unless missing_keys.empty?
+        set_last_error path, "%path% does not contain the key #{missing_keys.first}"
+        return false
+      end
+
+      if matcher.strict? && ! extra_keys.empty?
+        set_last_error path, "%path% contains an extra key #{extra_keys.first}"
+        return false
+      end
+
+      if matcher.ordered? && matcher.keys != other.keys
+        set_last_error path, "Incorrect key-ordering at %path% (#{matcher.keys.inspect} expected but was #{other.keys.inspect})"
+        return false
+      end
+
+      matcher.keys.all? { |k| match_json make_path(path,k), matcher[k], other[k] }
+    end
+
+    def set_last_error(path, message)
+      @last_error = message.gsub('%path%',path) if path
+    end
+
+    def make_path(path, segment)
+      if path
+        if segment.is_a? Fixnum
+          path + "[#{segment}]"
+        else
+          path + ".#{segment}"
+        end
+      end
     end
 
     def apply_array_defaults(array)

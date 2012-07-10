@@ -77,11 +77,61 @@ module JsonTester
       refute_match Matcher.new([]), @simple_array
     end
 
+    def test_match_arrays_ordered
+      assert_match Matcher.new(@simple_array.ordered!), @simple_array
+      refute_match Matcher.new(@simple_array.ordered!), @simple_array.reverse
+      refute_match Matcher.new(@simple_array.ordered!), []
+    end
+
+    def test_match_arrays_unordered
+      assert_match Matcher.new(@simple_array.unordered!), @simple_array
+      assert_match Matcher.new(@simple_array.unordered!), @simple_array.reverse
+      refute_match Matcher.new(@simple_array.unordered!), []
+    end
+
+    def test_match_arrays_strict
+      assert_match Matcher.new(@simple_array.strict!), @simple_array
+      refute_match Matcher.new(@simple_array.strict!), @simple_array + ['extra']
+      refute_match Matcher.new(@simple_array.strict!), @simple_array[1..-1]
+    end
+
+    def test_match_arrays_forgiving
+      assert_match Matcher.new(@simple_array.forgiving!), @simple_array
+      assert_match Matcher.new(@simple_array.forgiving!), @simple_array + ['extra']
+      refute_match Matcher.new(@simple_array.forgiving!), @simple_array[1..-1]
+    end
+
     def test_match_objects
       assert_match Matcher.new({}), {}
       assert_match Matcher.new(@simple_object), @simple_object
       refute_match Matcher.new(@simple_object), {}
       refute_match Matcher.new({}), @simple_object
+    end
+
+    def test_match_objects_ordered
+      reversed = @simple_object.reverse_each.inject({}){ |hash,(k,v)| hash[k] = v; hash }
+      assert_match Matcher.new(@simple_object.ordered!), @simple_object
+      refute_match Matcher.new(@simple_object.ordered!), reversed
+      refute_match Matcher.new(@simple_object.ordered!), {}
+    end
+
+    def test_match_objects_unordered
+      reversed = @simple_object.reverse_each.inject({}){ |hash,(k,v)| hash[k] = v; hash }
+      assert_match Matcher.new(@simple_object.unordered!), @simple_object
+      assert_match Matcher.new(@simple_object.unordered!), reversed
+      refute_match Matcher.new(@simple_object.unordered!), {}
+    end
+
+    def test_match_objects_strict
+      assert_match Matcher.new(@simple_object.strict!), @simple_object
+      refute_match Matcher.new(@simple_object.strict!), @simple_object.merge({'extra'=>'stuff'})
+      refute_match Matcher.new(@simple_object.strict!), @simple_object.clone.delete_if {|key| key == 'integer'}
+    end
+
+    def test_match_objects_forgiving
+      assert_match Matcher.new(@simple_object.forgiving!), @simple_object
+      assert_match Matcher.new(@simple_object.forgiving!), @simple_object.merge({'extra'=>'stuff'})
+      refute_match Matcher.new(@simple_object.forgiving!), @simple_object.clone.delete_if {|key| key == 'integer'}
     end
 
     def test_match_nil
@@ -164,6 +214,78 @@ module JsonTester
       refute_match Matcher.new(@complex_pattern), negative_target
     end
 
+    def test_error_not_match
+      m = Matcher.new('Hello world!')
+      m =~ nil
+      assert_equal 'At (JSON ROOT): expected "Hello world!" to match nil', m.last_error
+    end
+
+    def test_error_not_an_array
+      m = Matcher.new([1,2,3,4,5])
+      m =~ nil
+      assert_equal '(JSON ROOT) is not an array', m.last_error
+    end
+
+    def test_error_undersized_array
+      m = Matcher.new([1,2,3,4,5])
+      m =~ [1,2,3,4]
+      assert_equal '(JSON ROOT) contains too few elements (5 expected but was 4)', m.last_error
+    end
+
+    def test_error_oversized_array
+      m = Matcher.new([1,2,3,4,5].strict!)
+      m =~ [1,2,3,4,5,6]
+      assert_equal '(JSON ROOT) contains too many elements (5 expected but was 6)', m.last_error
+    end
+
+    def test_error_array_ordered_no_match
+      m = Matcher.new([1,2,3,4,5].ordered!)
+      m =~ [1,2,3,4,6]
+      assert_equal 'At (JSON ROOT)[4]: expected 5 to match 6', m.last_error
+    end
+
+    def test_error_array_unordered_no_match
+      m = Matcher.new([1,2,3,4,5].unordered!)
+      m =~ [1,2,3,4,6]
+      assert_equal '(JSON ROOT) does not contain an element matching 5', m.last_error
+    end
+
+    def test_error_not_a_hash
+      m = Matcher.new({'key1' => 'value1','key2' => 'value2'})
+      m =~ nil
+      assert_equal '(JSON ROOT) is not a hash', m.last_error
+    end
+
+    def test_error_hash_missing_key
+      m = Matcher.new({'key1' => 'value1','key2' => 'value2'})
+      m =~ {'key1' => 'value1'}
+      assert_equal '(JSON ROOT) does not contain the key key2', m.last_error
+    end
+
+    def test_error_hash_extra_key
+      m = Matcher.new({'key1' => 'value1','key2' => 'value2'}.strict!)
+      m =~ {'key1' => 'value1','key2' => 'value2', 'key3' => 'value3'}
+      assert_equal '(JSON ROOT) contains an extra key key3', m.last_error
+    end
+
+    def test_error_hash_ordering
+      m = Matcher.new({'key1' => 'value1','key2' => 'value2'}.ordered!)
+      m =~ {'key2' => 'value2','key1' => 'value1'}
+      assert_equal 'Incorrect key-ordering at (JSON ROOT) (["key1", "key2"] expected but was ["key2", "key1"])', m.last_error
+    end
+
+    def test_error_hash_no_match
+      m = Matcher.new({'key1' => 'value1','key2' => 'value2'})
+      m =~ {'key1' => 'value1','key2' => nil}
+      assert_equal 'At (JSON ROOT).key2: expected "value2" to match nil', m.last_error
+    end
+
+    def test_error_path
+      m = Matcher.new({'l1'=>{'l2'=>[nil,nil,{'l3'=>[nil,nil,nil,'THIS'].ordered!}].ordered!}})
+      m =~ {'l1'=>{'l2'=>[nil,nil,{'l3'=>[nil,nil,nil,'THAT']}]}}
+      assert_equal 'At (JSON ROOT).l1.l2[2].l3[3]: expected "THIS" to match "THAT"', m.last_error
+    end
+
     def test_inspection
       test_cases = [ {}, @simple_object, [], @simple_array, @complex_pattern ]
 
@@ -214,6 +336,73 @@ module JsonTester
         end
       ensure
         Matcher.skip_triple_equal_on = old_skip_triple_equal_on
+      end
+    end
+
+    def test_assume_unordered_arrays
+      old_assume_unordered_arrays = Matcher.assume_unordered_arrays
+
+      begin
+        Matcher.assume_unordered_arrays = true
+        assert_match Matcher.new(@simple_array.clone), @simple_array.reverse
+        Matcher.assume_unordered_arrays = false
+        refute_match Matcher.new(@simple_array.clone), @simple_array.reverse
+      ensure
+        Matcher.assume_unordered_arrays = old_assume_unordered_arrays
+      end
+    end
+
+    def test_assume_unordered_arrays
+      old_assume_unordered_arrays = Matcher.assume_unordered_arrays
+
+      begin
+        Matcher.assume_unordered_arrays = true
+        assert_match Matcher.new(@simple_array.clone), @simple_array.reverse
+        Matcher.assume_unordered_arrays = false
+        refute_match Matcher.new(@simple_array.clone), @simple_array.reverse
+      ensure
+        Matcher.assume_unordered_arrays = old_assume_unordered_arrays
+      end
+    end
+
+    def test_assume_strict_arrays
+      old_assume_strict_arrays = Matcher.assume_strict_arrays
+
+      begin
+        Matcher.assume_strict_arrays = true
+        refute_match Matcher.new(@simple_array.clone), @simple_array + ['extra']
+        Matcher.assume_strict_arrays = false
+        assert_match Matcher.new(@simple_array.clone), @simple_array + ['extra']
+      ensure
+        Matcher.assume_strict_arrays = old_assume_strict_arrays
+      end
+    end
+
+    def assume_unordered_hashes
+      old_assume_unordered_hashes = Matcher.assume_unordered_hashes
+
+      begin
+        reversed = @simple_object.reverse_each.inject({}){ |hash,(k,v)| hash[k] = v; hash }
+
+        Matcher.assume_unordered_hashes = true
+        assert_match Matcher.new(@simple_object.clone), reversed
+        Matcher.assume_unordered_hashes = false
+        refute_match Matcher.new(@simple_object.clone), reversed
+      ensure
+        Matcher.assume_unordered_hashes = old_assume_unordered_hashes
+      end
+    end
+
+    def test_assume_strict_hashs
+      old_assume_strict_hashs = Matcher.assume_strict_hashs
+
+      begin
+        Matcher.assume_strict_hashs = true
+        refute_match Matcher.new(@simple_object.clone), @simple_object.merge({'extra'=>'stuff'})
+        Matcher.assume_strict_hashs = false
+        assert_match Matcher.new(@simple_object.clone), @simple_object.merge({'extra'=>'stuff'})
+      ensure
+        Matcher.assume_strict_hashs = old_assume_strict_hashs
       end
     end
 
