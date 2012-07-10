@@ -1,8 +1,8 @@
 require 'minitest_helper'
-require 'json_tester'
+require 'json_expressions'
 
-module JsonTester
-  class TestJsonTester < ::MiniTest::Unit::TestCase
+module JsonExpressions
+  class TestJsonExpressions < ::MiniTest::Unit::TestCase
     def test_wildcard_matcher_is_a?
       refute WILDCARD_MATCHER.is_a? Object
       refute WILDCARD_MATCHER.is_a? Array

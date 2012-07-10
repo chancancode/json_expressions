@@ -1,7 +1,7 @@
 require 'minitest_helper'
-require 'json_tester/matcher'
+require 'json_expressions/matcher'
 
-module JsonTester
+module JsonExpressions
   class TestMatcher < ::MiniTest::Unit::TestCase
     def setup
       @simple_object = {

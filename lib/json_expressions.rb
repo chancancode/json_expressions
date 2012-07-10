@@ -1,6 +1,6 @@
-require 'json_tester/matcher'
+require 'json_expressions/matcher'
 
-module JsonTester
+module JsonExpressions
   WILDCARD_MATCHER = Object.new
 
   def WILDCARD_MATCHER.is_a?(klass)

@@ -1,44 +1,44 @@
-require 'json_tester'
-require 'json_tester/core_extensions'
+require 'json_expressions'
+require 'json_expressions/core_extensions'
 
-module JsonTester
+module JsonExpressions
   class Matcher
     class << self
-      # JsonTester::Matcher.skip_match_on (Array)
+      # JsonExpressions::Matcher.skip_match_on (Array)
       #   An array of classes and modules with undesirable `match` behavior
       #   Default: [ String ]
       attr_accessor :skip_match_on
-      JsonTester::Matcher.skip_match_on = [ String ]
+      JsonExpressions::Matcher.skip_match_on = [ String ]
 
-      # JsonTester::Matcher.skip_triple_equal_on (Array)
+      # JsonExpressions::Matcher.skip_triple_equal_on (Array)
       #   An array of classes and modules with undesirable `===` behavior
       #   Default: []
       attr_accessor :skip_triple_equal_on
-      JsonTester::Matcher.skip_triple_equal_on = []
+      JsonExpressions::Matcher.skip_triple_equal_on = []
 
-      # JsonTester::Matcher.assume_unordered_arrays (Boolean)
+      # JsonExpressions::Matcher.assume_unordered_arrays (Boolean)
       #   By default, assume arrays are unordered when not specified
       #   Default: true
       attr_accessor :assume_unordered_arrays
-      JsonTester::Matcher.assume_unordered_arrays = true
+      JsonExpressions::Matcher.assume_unordered_arrays = true
 
-      # JsonTester::Matcher.assume_strict_arrays (Boolean)
+      # JsonExpressions::Matcher.assume_strict_arrays (Boolean)
       #   By default, reject arrays with extra elements when not specified
       #   Default: true
       attr_accessor :assume_strict_arrays
-      JsonTester::Matcher.assume_strict_arrays = true
+      JsonExpressions::Matcher.assume_strict_arrays = true
 
-      # JsonTester::Matcher.assume_unordered_hashes (Boolean)
+      # JsonExpressions::Matcher.assume_unordered_hashes (Boolean)
       #   By default, assume hashes are unordered when not specified
       #   Default: true
       attr_accessor :assume_unordered_hashes
-      JsonTester::Matcher.assume_unordered_hashes = true
+      JsonExpressions::Matcher.assume_unordered_hashes = true
 
-      # JsonTester::Matcher.assume_strict_hashes (Boolean)
+      # JsonExpressions::Matcher.assume_strict_hashes (Boolean)
       #   By default, reject hashes with extra keys when not specified
       #   Default: true
       attr_accessor :assume_strict_hashes
-      JsonTester::Matcher.assume_strict_hashes = true
+      JsonExpressions::Matcher.assume_strict_hashes = true
     end
 
     attr_reader :last_error

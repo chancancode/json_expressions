@@ -1,7 +1,7 @@
 require 'minitest_helper'
-require 'json_tester/core_extensions'
+require 'json_expressions/core_extensions'
 
-module JsonTester
+module JsonExpressions
   class TestCoreExtensions < ::MiniTest::Unit::TestCase
     METHODS_MODULE_MAPPING = {
       :ordered   => Ordered,

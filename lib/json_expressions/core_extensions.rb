@@ -1,4 +1,4 @@
-module JsonTester
+module JsonExpressions
   module Strict; end
   module Forgiving; end
   module Ordered; end
@@ -56,13 +56,13 @@ module JsonTester
 end
 
 class Hash
-  include JsonTester::CoreExtensions
+  include JsonExpressions::CoreExtensions
   alias_method :reject_extra_keys!, :strict!
   alias_method :ignore_extra_keys!, :forgiving!
 end
 
 class Array
-  include JsonTester::CoreExtensions
+  include JsonExpressions::CoreExtensions
   alias_method :reject_extra_values!, :strict!
   alias_method :ignore_extra_values!, :forgiving!
 end

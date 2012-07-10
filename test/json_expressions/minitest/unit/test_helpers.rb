@@ -1,8 +1,8 @@
 require 'minitest_helper'
-require 'json_tester'
-require 'json_tester/minitest/unit/helpers'
+require 'json_expressions'
+require 'json_expressions/minitest/unit/helpers'
 
-module JsonTester
+module JsonExpressions
   module MiniTest
     module Unit
       class TestHelpers < ::MiniTest::Unit::TestCase

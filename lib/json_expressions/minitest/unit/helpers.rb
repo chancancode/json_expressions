@@ -1,12 +1,12 @@
 require 'json'
 
-module JsonTester
+module JsonExpressions
   module MiniTest
     module Unit
       module Helpers
         def assert_json_match(exp, act, msg = nil)
-          unless JsonTester::Matcher === exp
-            exp = JsonTester::Matcher.new(exp)
+          unless JsonExpressions::Matcher === exp
+            exp = JsonExpressions::Matcher.new(exp)
           end
 
           if String === act
