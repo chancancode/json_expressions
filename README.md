@@ -137,7 +137,7 @@ matches the JSON object
 
 ### Wildcard Matching
 
-You can use the WILDCARD_MATCHER to ignore keys that you don't care about (other than the fact that the key is included in the JSON).
+You can use the WILDCARD_MATCHER to ignore keys that you don't care about (other than the fact that the key exists).
 
 This pattern
 ```ruby
@@ -169,7 +169,7 @@ but not
 { "hex": "Hello world!" }
 ```
 
-Sometimes this behavior is undesirable. For instance, String#match(other) converts `other` into a `Regexp` and use that to match against itself, which is probably not what you want (`'Hello wolrd!'.match '' => #<MatchData "">`!).
+Sometimes this behavior is undesirable. For instance, String#match(other) converts `other` into a `Regexp` and use that to match against itself, which is probably not what you want (`''.match 'Hello world!' # => nil` but `'Hello world!'.match '' # => #<MatchData "">`!).
 
 You can specific a list of classes/modules with undesirable `match` behavior, and json_expression will fall back to calling `===` on them instead (see the section below for `===` vs `==`).
 
@@ -186,7 +186,7 @@ JsonExpressions::Matcher.skip_match_on = [ String ]
 
 ### Type Matching
 
-For objects that does not `respond_to? :match` or those you opt-ed out explicitly (such as `String`), `===` will be called to match against the corresponding value in the JSON. For most classes, this behaves identical to `==`. A notably exception would be `Module` (and by inheritance, `Class`) objects, which overrides `===` to mean `instance of`. You can exploit this behavior to do type matching:
+For objects that do not `respond_to? :match` or those you opt-ed out explicitly (such as `String`), `===` will be called to instead. For most classes, its behaves identical to `==`. A notable exception would be `Module` (and by inheritance, `Class`) objects, which overrides `===` to mean `instance of`. You can exploit this behavior to do type matching:
 ```ruby
 {
   'integer' => Fixnum,
@@ -226,7 +226,7 @@ JsonExpressions::Matcher.skip_triple_equal_on = [ ]
 
 ### Capturing
 
-Similar to how "capturs" work in Regex, you can capture the value of certain keys for later use:
+Similar to how "captures" work in Regex, you can capture the value of certain keys for later use:
 ```ruby
 matcher = JsonExpressions::Matcher.new({
   'key1' => :key1,
