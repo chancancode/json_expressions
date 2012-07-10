@@ -42,6 +42,7 @@ module JsonTester
     end
 
     attr_reader :last_error
+    attr_reader :captures
 
     def initialize(json, options = {})
       defaults = {}
@@ -67,10 +68,13 @@ module JsonTester
 
     def reset!
       @last_errot = nil
+      @captures   = {}
     end
 
     def match_json(path, matcher, other)
-      if matcher.is_a? Array
+      if matcher.is_a? Symbol
+        capture path, matcher, other
+      elsif matcher.is_a? Array
         match_array path, matcher, other
       elsif matcher.is_a? Hash
         match_hash path, matcher, other
@@ -80,6 +84,20 @@ module JsonTester
         match_obj path, matcher, other, :===
       else
         match_obj path, matcher, other, :==
+      end
+    end
+
+    def capture(path, name, value)
+      if @captures.key? name
+        if match_json nil, @captures[name], value
+          true
+        else
+          set_last_error path, "At %path%: expected capture with key #{name.inspect} and value #{@captures[name]} to match #{value.inspect}"
+          false
+        end
+      else
+        @captures[name] = value
+        true
       end
     end
 

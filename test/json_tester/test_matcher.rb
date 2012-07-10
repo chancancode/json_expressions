@@ -165,6 +165,19 @@ module JsonTester
       assert_match Matcher.new(WILDCARD_MATCHER), nil
     end
 
+    def test_capture
+      m = Matcher.new({'key1' => :capture_me})
+      assert_match m, {'key1' => 'value1'}
+      assert_equal 'value1', m.captures[:capture_me]
+    end
+
+    def test_match_capture
+      m = Matcher.new({'key1' => :capture_me, 'key2' => :capture_me})
+      m =~ {'key1' => 'value1','key2'=>'value1'}
+      assert_match m, {'key1' => 'value1','key2'=>'value1'}
+      refute_match m, {'key1' => 'value1','key2'=>'value2'}
+    end
+
     def test_match_recursive
       positive_target = {
         'l1_string'   => 'Hello world!',
@@ -218,6 +231,12 @@ module JsonTester
       m = Matcher.new('Hello world!')
       m =~ nil
       assert_equal 'At (JSON ROOT): expected "Hello world!" to match nil', m.last_error
+    end
+
+    def test_error_not_match_capture
+      m = Matcher.new({'key1' => :capture_me, 'key2' => :capture_me})
+      m =~ {'key1' => 'value1','key2'=>nil}
+      assert_equal 'At (JSON ROOT).key2: expected capture with key :capture_me and value value1 to match nil', m.last_error
     end
 
     def test_error_not_an_array
