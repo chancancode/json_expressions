@@ -2,7 +2,7 @@ require 'minitest_helper'
 require 'json_tester/matcher'
 
 module JsonTester
-  class TestMatcher < MiniTest::Unit::TestCase
+  class TestMatcher < ::MiniTest::Unit::TestCase
     def setup
       @simple_object = {
         'integer' => 1,
@@ -378,7 +378,7 @@ module JsonTester
       end
     end
 
-    def assume_unordered_hashes
+    def test_assume_unordered_hashes
       old_assume_unordered_hashes = Matcher.assume_unordered_hashes
 
       begin
@@ -393,16 +393,16 @@ module JsonTester
       end
     end
 
-    def test_assume_strict_hashs
-      old_assume_strict_hashs = Matcher.assume_strict_hashs
+    def test_assume_strict_hashes
+      old_assume_strict_hashes = Matcher.assume_strict_hashes
 
       begin
-        Matcher.assume_strict_hashs = true
+        Matcher.assume_strict_hashes = true
         refute_match Matcher.new(@simple_object.clone), @simple_object.merge({'extra'=>'stuff'})
-        Matcher.assume_strict_hashs = false
+        Matcher.assume_strict_hashes = false
         assert_match Matcher.new(@simple_object.clone), @simple_object.merge({'extra'=>'stuff'})
       ensure
-        Matcher.assume_strict_hashs = old_assume_strict_hashs
+        Matcher.assume_strict_hashes = old_assume_strict_hashes
       end
     end
 

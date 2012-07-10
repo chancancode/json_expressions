@@ -182,11 +182,11 @@ module JsonTester
 
     def apply_hash_defaults(hash)
       if ! hash.ordered? && ! hash.unordered?
-        self.class.assume_unordered_arrays ? hash.unordered! : hash.ordered!
+        self.class.assume_unordered_hashes ? hash.unordered! : hash.ordered!
       end
 
       if ! hash.strict? && ! hash.forgiving?
-        self.class.assume_strict_arrays ? hash.strict! : hash.forgiving!
+        self.class.assume_strict_hashes ? hash.strict! : hash.forgiving!
       end
     end
 

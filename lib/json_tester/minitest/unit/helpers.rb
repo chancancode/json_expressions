@@ -14,6 +14,9 @@ module JsonTester
           end
 
           assert exp =~ act, ->{exp.last_error}
+
+          # Return the matcher
+          return exp
         end
       end
     end
