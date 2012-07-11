@@ -91,12 +91,12 @@ class UsersControllerTest < MiniTest::Unit::TestCase
         homepage:   /\Ahttps?\:\/\/.*\z/i,       # Let's get serious
         created_at: WILDCARD_MATCHER,            # Don't care as long as it exists
         updated_at: WILDCARD_MATCHER,
-        posts:      [
+        posts: [
           {
             id:      Fixnum,
             subject: 'Hello world!',
             user_id: :user_id,                   # Match against the captured value
-            tags:    [
+            tags: [
               'announcement',
               'welcome',
               'introduction'
