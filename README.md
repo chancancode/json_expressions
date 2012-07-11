@@ -3,7 +3,7 @@ JSON Expressions
 
 ## Introduction
 
-Your API is a contract between your service and your developers. Therefore it is important to know what exactly your JSON API is returning to the developers and make sure you don't accidentally change that contract without updating the documentations. Perhaps you should write some controller tests for your JSON endpoints:
+Your API is a contract between your service and your developers. It is important for you to know exactly what your JSON API is returning to the developers in order to make sure you don't accidentally change things without updating the documentations and/or bumping the API version number. Perhaps some controller tests for your JSON endpoints would help:
 
 ```ruby
 # MiniTest::Unit example
@@ -28,10 +28,15 @@ class UsersControllerTest < MiniTest::Unit::TestCase
     assert_kind_of Fixnum, posts[0]['id']
     assert_equal 'Hello world!', posts[0]['subject']
     assert_equal user_id, posts[0]['user_id']
+    assert_include posts[0]['tags'], 'announcement'
+    assert_include posts[0]['tags'], 'welcome'
+    assert_include posts[0]['tags'], 'introduction'
 
     assert_kind_of Fixnum, posts[1]['id']
-    assert_equal 'Hello world!', posts[1]['subject']
+    assert_equal 'An awesome blog post', posts[1]['subject']
     assert_equal user_id, posts[1]['user_id']
+    assert_include posts[0]['tags'], 'blog'
+    assert_include posts[0]['tags'], 'life'
   end
 end
 ```
@@ -75,28 +80,34 @@ class UsersControllerTest < MiniTest::Unit::TestCase
 
     # This is what we expect the returned JSON to look like
     pattern = {
-      'user' => {
-        'id'         => :user_id,                # "Capture" this value for later
-        'username'   => 'chancancode',           # Match this exact string
-        'full_name'  => 'Godfrey Chan',
-        'email'      => 'godfrey@example.com',
-        'type'       => 'Administrator',
-        'points'     => Fixnum,                  # Any integer value
-        'homepage'   => /\Ahttps?\:\/\/.*\z/i,   # Let's get serious
-        'created_at' => WILDCARD_MATCHER,        # Don't care as long as it exists
-        'updated_at' => WILDCARD_MATCHER,
-        'posts'      => [
+      user: {
+        id:         :user_id,                # "Capture" this value for later
+        username:   'chancancode',           # Match this exact string
+        full_name:  'Godfrey Chan',
+        email:      'godfrey@example.com',
+        type:       'Administrator',
+        points:     Fixnum,                  # Any integer value
+        homepage:   /\Ahttps?\:\/\/.*\z/i,   # Let's get serious
+        created_at: WILDCARD_MATCHER,        # Don't care as long as it exists
+        updated_at: WILDCARD_MATCHER,
+        posts:      [
           {
-            'id'      => Fixnum,
-            'subject' => 'Hello world!',
-            'user_id' => :user_id                # Match against the captured value
+            id:      Fixnum,
+            subject: 'Hello world!',
+            user_id: :user_id,               # Match against the captured value
+            tags:    [
+              'announcement',
+              'welcome',
+              'introduction'
+            ]                                    # Ordering of elements does not matter by default
           }.ignore_extra_keys!,                  # Skip the uninteresting stuff
           {
-            'id'      => Fixnum,
-            'subject' => 'An awesome blog post',
-            'user_id' => :user_id
+            id:      Fixnum,
+            subject: 'An awesome blog post',
+            user_id: :user_id,
+            tags:    ['blog' , 'life']
           }.ignore_extra_keys!
-        ].ordered!                               # Ensure they are returned in this exact order
+        ].ordered!                               # Ensure the posts are in this exact order
       }
     }
 
@@ -113,13 +124,13 @@ end
 This pattern
 ```ruby
 {
-  'integer' => 1,
-  'float'   => 1.1,
-  'string'  => 'Hello world!',
-  'boolean' => true,
-  'array'   => [1,2,3],
-  'object'  => {'key1' => 'value1','key2' => 'value2'},
-  'null'    => nil,
+  integer: 1,
+  float:   1.1,
+  string:  'Hello world!',
+  boolean: true,
+  array:   [1,2,3],
+  object:  {key1: 'value1',key2: 'value2'},
+  null:    nil,
 }
 ```
 matches the JSON object
@@ -137,7 +148,7 @@ matches the JSON object
 
 ### Wildcard Matching
 
-You can use the WILDCARD_MATCHER to ignore keys that you don't care about (other than the fact that the key exists).
+You can use the WILDCARD_MATCHER to ignore keys that you don't care about (other than the fact that they exist).
 
 This pattern
 ```ruby
@@ -148,17 +159,17 @@ matches the JSON array
 [ 1, 1.1, "Hello world!", true, [1,2,3], {"key1": "value1","key2": "value2"}, null]
 ```
 
-Furthermore, because the pattern is expressed in plain old Ruby code, you can also write:
+Furthermore, because the pattern is just plain old Ruby code, you can also write:
 ```ruby
 [ WILDCARD_MATCHER ] * 7
 ```
 
 ### Pattern Matching
 
-When an object `.respond_to? :match`, `match` will be called to match against the corresponding value in the JSON. Notably, this includes `Regexp` objects, which means you can use regular expressions in your pattern:
+When an object `.respond_to? :match`, `match` will be called to by json_expression to match against the corresponding value in the target JSON. Notably, `Regexp` objects responds to `match`, which means you can use regular expressions in your pattern:
 
 ```ruby
-{ 'hex' => /\A0x[0-9a-f]+\z/i }
+{ hex: /\A0x[0-9a-f]+\z/i }
 ```
 matches
 ```json
@@ -171,7 +182,7 @@ but not
 
 Sometimes this behavior is undesirable. For instance, String#match(other) converts `other` into a `Regexp` and use that to match against itself, which is probably not what you want (`''.match 'Hello world!' # => nil` but `'Hello world!'.match '' # => #<MatchData "">`!).
 
-You can specific a list of classes/modules with undesirable `match` behavior, and json_expression will fall back to calling `===` on them instead (see the section below for `===` vs `==`).
+You can specific a list of classes/modules with undesirable `match` behavior, and json_expression will fall back to calling `===` on these objects instead (see the section below for `===` vs `==`).
 
 ```ruby
 # This is the default setting
@@ -186,16 +197,16 @@ JsonExpressions::Matcher.skip_match_on = [ String ]
 
 ### Type Matching
 
-For objects that do not `respond_to? :match` or those you opt-ed out explicitly (such as `String`), `===` will be called to instead. For most classes, its behaves identical to `==`. A notable exception would be `Module` (and by inheritance, `Class`) objects, which overrides `===` to mean `instance of`. You can exploit this behavior to do type matching:
+For objects that do not `respond_to? :match` or those you opt-ed out explicitly (such as `String`), `===` will be called instead. For most objects, it behaves identical to `==`. A notable exception would be `Module` (and by inheritance, `Class`) objects, which overrides `===` to mean `instance of`. You can exploit this behavior to do type matching:
 ```ruby
 {
-  'integer' => Fixnum,
-  'float'   => Float,
-  'string'  => String,
-  'boolean' => Boolean,
-  'array'   => Array,
-  'object'  => Hash,
-  'null'    => NilClass,
+  integer: Fixnum,
+  float:   Float,
+  string:  String,
+  boolean: Boolean,
+  array:   Array,
+  object:  Hash,
+  null:    NilClass,
 }
 ```
 matches the JSON object
@@ -226,12 +237,12 @@ JsonExpressions::Matcher.skip_triple_equal_on = [ ]
 
 ### Capturing
 
-Similar to how "captures" work in Regex, you can capture the value of certain keys for later use:
+Similar to how "captures" work in Regexp, you can capture the value of certain keys for later use:
 ```ruby
 matcher = JsonExpressions::Matcher.new({
-  'key1' => :key1,
-  'key2' => :key2,
-  'key3' => :key3
+  key1: :key1,
+  key2: :key2,
+  key3: :key3
 })
 
 matcher =~ JSON.parse('{"key1":"value1", "key2":"value2", "key3":"value3"}') # => true
@@ -244,9 +255,9 @@ matcher.captures[:key3] # => "value3"
 If the same symbol is used multiple times, json_expression will make sure they agree. This pattern
 ```ruby
 {
-  'key1' => :capture_me,
-  'key2' => :capture_me,
-  'key3' => :capture_me
+  key1: :capture_me,
+  key2: :capture_me,
+  key3: :capture_me
 }
 ```
 matches
@@ -278,7 +289,7 @@ will match
 ```
 and
 ```ruby
-{ 'key1' => 'value1', 'key2' => 'value2' }
+{ key1: 'value1', key2: 'value2' }
 ```
 will match
 ```json
@@ -302,7 +313,7 @@ JsonExpressions::Matcher.assume_unordered_arrays = false
 JsonExpressions::Matcher.assume_unordered_hashes = false
 ```
 
-### Strictness
+### "Strictness"
 
 By default, all arrays and JSON objects (i.e. Ruby hashes) are assumed to be "strict". This means any extra elements or keys in the JSON target will cause the match to fail:
 ```ruby
@@ -314,7 +325,7 @@ will not match
 ```
 and
 ```ruby
-{ 'key1' => 'value1', 'key2' => 'value2' }
+{ key1: 'value1', key2: 'value2' }
 ```
 will not match
 ```json
@@ -324,20 +335,20 @@ will not match
 You can change this behavior in a case-by-case manner:
 ```ruby
 {
-  "strict_array"    => [1,2,3,4,5].strict!, # calling strict! is optional as it's the default
-  "forgiving_array" => [1,2,3,4,5].forgiving!,
-  "strict_hash"     => {'a'=>1, 'b'=>2}.strict!,
-  "forgiving_hash"  => {'a'=>1, 'b'=>2}.forgiving!
+  strict_array:    [1,2,3,4,5].strict!, # calling strict! is optional as it's the default
+  forgiving_array: [1,2,3,4,5].forgiving!,
+  strict_hash:     {'a'=>1, 'b'=>2}.strict!,
+  forgiving_hash:  {'a'=>1, 'b'=>2}.forgiving!
 }
 ```
 
 They also come with some more sensible aliases:
 ```ruby
 {
-  "strict_array"    => [1,2,3,4,5].reject_extra_values!,
-  "forgiving_array" => [1,2,3,4,5].ignore_extra_values!,
-  "strict_hash"     => {'a'=>1, 'b'=>2}.reject_extra_keys!,
-  "forgiving_hash"  => {'a'=>1, 'b'=>2}.ignore_extra_keys!
+  strict_array:    [1,2,3,4,5].reject_extra_values!,
+  forgiving_array: [1,2,3,4,5].ignore_extra_values!,
+  strict_hash:     {'a'=>1, 'b'=>2}.reject_extra_keys!,
+  forgiving_hash:  {'a'=>1, 'b'=>2}.ignore_extra_keys!
 }
 ```
 

@@ -153,25 +153,25 @@ module JsonExpressions
 
       apply_hash_defaults matcher
 
-      missing_keys = matcher.keys - other.keys
-      extra_keys   = other.keys - matcher.keys
+      missing_keys = matcher.keys.map(&:to_s) - other.keys.map(&:to_s)
+      extra_keys   = other.keys.map(&:to_s) - matcher.keys.map(&:to_s)
 
       unless missing_keys.empty?
-        set_last_error path, "%path% does not contain the key #{missing_keys.first}"
+        set_last_error path, "%path% does not contain the key #{missing_keys.first.to_s}"
         return false
       end
 
       if matcher.strict? && ! extra_keys.empty?
-        set_last_error path, "%path% contains an extra key #{extra_keys.first}"
+        set_last_error path, "%path% contains an extra key #{extra_keys.first.to_s}"
         return false
       end
 
       if matcher.ordered? && matcher.keys != other.keys
-        set_last_error path, "Incorrect key-ordering at %path% (#{matcher.keys.inspect} expected but was #{other.keys.inspect})"
+        set_last_error path, "Incorrect key-ordering at %path% (#{matcher.keys.map(&:to_s).inspect} expected but was #{other.keys.map(&:to_s).inspect})"
         return false
       end
 
-      matcher.keys.all? { |k| match_json make_path(path,k), matcher[k], other[k] }
+      matcher.keys.all? { |k| match_json make_path(path,k), matcher[k] , other[k.to_s] || other[k.to_sym] }
     end
 
     def set_last_error(path, message)
@@ -180,11 +180,7 @@ module JsonExpressions
 
     def make_path(path, segment)
       if path
-        if segment.is_a? Fixnum
-          path + "[#{segment}]"
-        else
-          path + ".#{segment}"
-        end
+        segment.is_a?(Fixnum) ? path + "[#{segment}]" : path + ".#{segment.to_s}"
       end
     end
 
