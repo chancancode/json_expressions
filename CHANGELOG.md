@@ -1,3 +1,8 @@
+### v0.7.0 [view commit logs](https://github.com/chancancode/json_expressions/compare/0.6.0...0.7.0))
+
+* BREAKING: Removed support for Object#match in favor of Object#===
+* BREAKING: Removed configuration option JsonExpressions::Matcher.skip_match_on
+
 ### v0.6.0 [view commit logs](https://github.com/chancancode/json_expressions/compare/0.5.0...0.6.0)
 
 * Added non-bang version of `strict`, `forgiving`, `ordered` and `unordered`
