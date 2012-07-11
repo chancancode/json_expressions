@@ -18,6 +18,13 @@ module JsonExpressions
     METHODS_MODULE_MAPPING.each do |meth, mod|
       ['array', 'hash'].each do |klass|
         eval <<-EOM, nil, __FILE__, __LINE__ + 1
+          def test_#{klass}_#{meth}
+            refute @#{klass}.is_a? #{mod}
+            #{klass} = @#{klass}.#{meth}
+            refute_equal #{klass}.object_id, @#{klass}.object_id
+            assert #{klass}.is_a? #{mod}
+          end
+
           def test_#{klass}_#{meth}!
             refute @#{klass}.is_a? #{mod}
             @#{klass}.#{meth}!
@@ -33,10 +40,22 @@ module JsonExpressions
       end
     end
 
+    def test_hash_reject_extra_keys
+      refute @hash.strict?
+      assert @hash.reject_extra_keys.strict?
+      refute @hash.strict?
+    end
+
     def test_hash_reject_extra_keys!
       refute @hash.strict?
       @hash.reject_extra_keys!
       assert @hash.strict?
+    end
+
+    def test_hash_ignore_extra_keys
+      refute @hash.forgiving?
+      assert @hash.ignore_extra_keys.forgiving?
+      refute @hash.forgiving?
     end
 
     def test_hash_ignore_extra_keys!
@@ -45,10 +64,22 @@ module JsonExpressions
       assert @hash.forgiving?
     end
 
+    def test_array_reject_extra_values
+      refute @array.strict?
+      assert @array.reject_extra_values.strict?
+      refute @array.strict?
+    end
+
     def test_array_reject_extra_values!
       refute @array.strict?
       @array.reject_extra_values!
       assert @array.strict?
+    end
+
+    def test_array_ignore_extra_values
+      refute @array.forgiving?
+      assert @array.ignore_extra_values.forgiving?
+      refute @array.forgiving?
     end
 
     def test_array_ignore_extra_values!

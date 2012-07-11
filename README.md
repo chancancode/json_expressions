@@ -63,15 +63,16 @@ Add it to your Gemfile:
 gem 'json_expressions'
 ```
 
-Then add this to your test/spec helper file:
-
+Add this to your test/spec helper file:
 ```ruby
-# MiniTest::Unit example
+# For MiniTest::Unit
 require 'json_expressions/minitest'
+
+# For RSpec
+require 'json_expressions/rspec'
 ```
 
 Which allows you to do...
-
 ```ruby
 # MiniTest::Unit example
 class UsersControllerTest < MiniTest::Unit::TestCase
@@ -117,7 +118,22 @@ class UsersControllerTest < MiniTest::Unit::TestCase
     assert matcher.captures[:user_id] > 0
   end
 end
+
+# RSpec example
+describe UsersController, "#show" do
+  it "returns a user" do
+    pattern = # See above...
+
+    server_response = get '/users/chancancode.json'
+
+    server_response.body.should match_json_expression(pattern)
+  end
+end
 ```
+
+### `RSpec` Integration
+
+
 
 ### Basic Matching
 
@@ -359,9 +375,9 @@ JsonExpressions::Matcher.assume_strict_arrays = false
 JsonExpressions::Matcher.assume_strict_hashes = false
 ```
 
-## Testing Frameworks Support
+## Support for `MiniTest::Spec` (and other testing frameworks)
 
-The `Matcher` class itself is written in a testing-framework-agnostic manner. This allows you to easily write custom helpers/matchers for your favorite testing framework. Currently, the gem only ships with helpers for `MiniTest::Unit`. `MiniTest::Spec` and `RSpec` are on my TODO list, but it is not a high priority for me personally, as I currently don't use these frameworks actively in my projects. If you need this now, write it yourself (and submit a pull request) - it's really easy, I promise (see `lib/json_expressions/minitest/unit/helpers.rb` for inspiration).
+The `Matcher` class itself is written in a testing-framework-agnostic manner. This allows you to easily write custom helpers/matchers for your favorite testing framework. `MiniTest::Spec` is on my TODO list, but it is not a high priority for me personally, as I currently don't use it. If you need this now, write it yourself and submit a pull request - it's really easy, I promise (see `lib/json_expressions/minitest/unit/helpers.rb` for inspiration).
 
 ## Contributing
 

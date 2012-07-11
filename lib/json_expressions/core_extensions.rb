@@ -13,6 +13,14 @@ module JsonExpressions
       self.is_a? Unordered
     end
 
+    def ordered
+      self.clone.ordered!
+    end
+
+    def unordered
+      self.clone.unordered!
+    end
+
     def ordered!
       if self.unordered?
         raise "cannot mark an unordered #{self.class} as ordered!"
@@ -37,6 +45,14 @@ module JsonExpressions
       self.is_a? Forgiving
     end
 
+    def strict
+      self.clone.strict!
+    end
+
+    def forgiving
+      self.clone.forgiving!
+    end
+
     def strict!
       if self.forgiving?
         raise "cannot mark a forgiving #{self.class} as strict!"
@@ -57,12 +73,16 @@ end
 
 class Hash
   include JsonExpressions::CoreExtensions
+  alias_method :reject_extra_keys, :strict
   alias_method :reject_extra_keys!, :strict!
+  alias_method :ignore_extra_keys, :forgiving
   alias_method :ignore_extra_keys!, :forgiving!
 end
 
 class Array
   include JsonExpressions::CoreExtensions
+  alias_method :reject_extra_values, :strict
   alias_method :reject_extra_values!, :strict!
+  alias_method :ignore_extra_values, :forgiving
   alias_method :ignore_extra_values!, :forgiving!
 end
