@@ -82,20 +82,20 @@ class UsersControllerTest < MiniTest::Unit::TestCase
     # This is what we expect the returned JSON to look like
     pattern = {
       user: {
-        id:         :user_id,                # "Capture" this value for later
-        username:   'chancancode',           # Match this exact string
+        id:         :user_id,                    # "Capture" this value for later
+        username:   'chancancode',               # Match this exact string
         full_name:  'Godfrey Chan',
         email:      'godfrey@example.com',
         type:       'Administrator',
-        points:     Fixnum,                  # Any integer value
-        homepage:   /\Ahttps?\:\/\/.*\z/i,   # Let's get serious
-        created_at: WILDCARD_MATCHER,        # Don't care as long as it exists
+        points:     Fixnum,                      # Any integer value
+        homepage:   /\Ahttps?\:\/\/.*\z/i,       # Let's get serious
+        created_at: WILDCARD_MATCHER,            # Don't care as long as it exists
         updated_at: WILDCARD_MATCHER,
         posts:      [
           {
             id:      Fixnum,
             subject: 'Hello world!',
-            user_id: :user_id,               # Match against the captured value
+            user_id: :user_id,                   # Match against the captured value
             tags:    [
               'announcement',
               'welcome',
