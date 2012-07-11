@@ -314,28 +314,6 @@ module JsonExpressions
       end
     end
 
-    def test_skip_match
-      old_skip_match_on = Matcher.skip_match_on
-
-      Matcher.skip_match_on = [String, Numeric, Enumerable]
-
-      begin
-        publicize_method(Matcher, :matchable?) do
-          matcher = Matcher.new(nil)
-          refute matcher.matchable? 'Hello world!'
-          refute matcher.matchable? 1
-          refute matcher.matchable? 1.1
-          refute matcher.matchable? [1,2,3]
-          refute matcher.matchable? (1..10)
-          assert matcher.matchable? true
-          assert matcher.matchable? nil
-          assert matcher.matchable? Time.now
-        end
-      ensure
-        Matcher.skip_match_on = old_skip_match_on
-      end
-    end
-
     def test_skip_triple_equal
       old_skip_triple_equal_on = Matcher.skip_triple_equal_on
 

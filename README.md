@@ -180,10 +180,24 @@ Furthermore, because the pattern is just plain old Ruby code, you can also write
 [ WILDCARD_MATCHER ] * 7
 ```
 
-### Pattern Matching
+### Object Equality
 
-When an object `.respond_to? :match`, `match` will be called to by json_expression to match against the corresponding value in the target JSON. Notably, `Regexp` objects responds to `match`, which means you can use regular expressions in your pattern:
+By default, json_expressions uses `Object#===` to match against the corresponding value in the target JSON. In most cases, this method behaves exactly the same as `Object#==`. However, certain classes override this method to provide specialized behavior (notably `Regexp` and `Module`, see below). If you find this undesirable for certain classes, you can explicitly opt them out and json_expressions will call `Object#==` instead:
 
+```ruby
+# This is the default setting
+JsonExpressions::Matcher.skip_triple_equal_on = [ ]
+
+# To add more modules/classes
+# JsonExpressions::Matcher.skip_triple_equal_on << MyClass
+
+# To turn this off completely
+# JsonExpressions::Matcher.skip_triple_equal_on = [ BasicObject ]
+```
+
+### Regular Expressions
+
+Since `Regexp` overrides `Object#===` to mean "matches", you can use them in your patterns and json_expressions will do the right thing:
 ```ruby
 { hex: /\A0x[0-9a-f]+\z/i }
 ```
@@ -196,24 +210,9 @@ but not
 { "hex": "Hello world!" }
 ```
 
-Sometimes this behavior is undesirable. For instance, String#match(other) converts `other` into a `Regexp` and use that to match against itself, which is probably not what you want (`''.match 'Hello world!' # => nil` but `'Hello world!'.match '' # => #<MatchData "">`!).
-
-You can specific a list of classes/modules with undesirable `match` behavior, and json_expression will fall back to calling `===` on these objects instead (see the section below for `===` vs `==`).
-
-```ruby
-# This is the default setting
-JsonExpressions::Matcher.skip_match_on = [ String ]
-
-# To add more modules/classes
-# JsonExpressions::Matcher.skip_match_on << MyClass
-
-# To turn this off completely
-# JsonExpressions::Matcher.skip_match_on = [ BasicObject ]
-```
-
 ### Type Matching
 
-For objects that do not `respond_to? :match` or those you opt-ed out explicitly (such as `String`), `===` will be called instead. For most objects, it behaves identical to `==`. A notable exception would be `Module` (and by inheritance, `Class`) objects, which overrides `===` to mean `instance of`. You can exploit this behavior to do type matching:
+`Module` (and by inheritance, `Class`) overrides `===` to mean `instance of`. You can exploit this behavior to do type matching:
 ```ruby
 {
   integer: Fixnum,
@@ -236,19 +235,6 @@ matches the JSON object
   "object": {"key1": "value1", "key2": "value2"},
   "null": null
 }
-```
-
-You can specific a list of classes/modules with undesirable `===` behavior, and json_expression will fall back to calling `==` on them instead.
-
-```ruby
-# This is the default setting
-JsonExpressions::Matcher.skip_triple_equal_on = [ ]
-
-# To add more modules/classes
-# JsonExpressions::Matcher.skip_triple_equal_on << MyClass
-
-# To turn this off completely
-# JsonExpressions::Matcher.skip_triple_equal_on = [ BasicObject ]
 ```
 
 ### Capturing

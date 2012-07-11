@@ -4,12 +4,6 @@ require 'json_expressions/core_extensions'
 module JsonExpressions
   class Matcher
     class << self
-      # JsonExpressions::Matcher.skip_match_on (Array)
-      #   An array of classes and modules with undesirable `match` behavior
-      #   Default: [ String ]
-      attr_accessor :skip_match_on
-      JsonExpressions::Matcher.skip_match_on = [ String ]
-
       # JsonExpressions::Matcher.skip_triple_equal_on (Array)
       #   An array of classes and modules with undesirable `===` behavior
       #   Default: []
@@ -20,7 +14,7 @@ module JsonExpressions
       #   By default, assume arrays are unordered when not specified
       #   Default: true
       attr_accessor :assume_unordered_arrays
-      JsonExpressions::Matcher.assume_unordered_arrays = true
+      JsonExpressions::Matcher.assume_unordered_arrays = false
 
       # JsonExpressions::Matcher.assume_strict_arrays (Boolean)
       #   By default, reject arrays with extra elements when not specified
@@ -78,8 +72,6 @@ module JsonExpressions
         match_array path, matcher, other
       elsif matcher.is_a? Hash
         match_hash path, matcher, other
-      elsif matcher.respond_to?(:match) && matchable?(matcher)
-        match_obj path, matcher, other, :match
       elsif triple_equable?(matcher)
         match_obj path, matcher, other, :===
       else
@@ -201,14 +193,6 @@ module JsonExpressions
 
       if ! hash.strict? && ! hash.forgiving?
         self.class.assume_strict_hashes ? hash.strict! : hash.forgiving!
-      end
-    end
-
-    def matchable?(obj)
-      if self.class.skip_match_on.include? obj.class
-        false
-      else
-        self.class.skip_match_on.none? { |klass| obj.is_a? klass }
       end
     end
 
