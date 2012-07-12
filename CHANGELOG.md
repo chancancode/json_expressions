@@ -1,3 +1,7 @@
+### v0.7.1 [view commit logs](https://github.com/chancancode/json_expressions/compare/0.6.0...0.7.0)
+
+* Bugfix: Correctly matching `false` inside a symbol-keyed hash (Fixes #1)
+
 ### v0.7.0 [view commit logs](https://github.com/chancancode/json_expressions/compare/0.6.0...0.7.0)
 
 * BREAKING: Removed support for Object#match in favor of Object#===
