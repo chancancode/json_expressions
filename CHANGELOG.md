@@ -1,4 +1,8 @@
-### v0.7.1 [view commit logs](https://github.com/chancancode/json_expressions/compare/0.6.0...0.7.0)
+### v0.7.2 [view commit logs](https://github.com/chancancode/json_expressions/compare/0.7.1...0.7.2)
+
+* Bugfix: Corrected a misbehaving require statement in minitest helpers (Fixes #2)
+
+### v0.7.1 [view commit logs](https://github.com/chancancode/json_expressions/compare/0.7.0...0.7.1)
 
 * Bugfix: Correctly matching `false` inside a symbol-keyed hash (Fixes #1)
 

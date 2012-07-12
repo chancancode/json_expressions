@@ -1,4 +1,4 @@
-require 'minitest'
+require 'minitest/unit'
 require 'json_expressions'
 require 'json_expressions/minitest/unit/helpers'
 
