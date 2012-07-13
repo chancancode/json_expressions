@@ -131,10 +131,6 @@ describe UsersController, "#show" do
 end
 ```
 
-### `RSpec` Integration
-
-
-
 ### Basic Matching
 
 This pattern
