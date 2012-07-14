@@ -235,7 +235,7 @@ matches the JSON object
 
 ### Ranges
 
-`Range` overrides `===` to mean `in?`. Therefore,
+`Range` overrides `===` to mean `include?`. Therefore,
 ```ruby
 { day: (1..31), month: (1..12) }
 ```
