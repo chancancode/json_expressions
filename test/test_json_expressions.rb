@@ -41,15 +41,6 @@ module JsonExpressions
       assert WILDCARD_MATCHER =~ [1,2,3,4,5]
       assert WILDCARD_MATCHER =~ {k1: 'v1', k2: 'v2'}
 
-      assert WILDCARD_MATCHER.match 1
-      assert WILDCARD_MATCHER.match 1.1
-      assert WILDCARD_MATCHER.match 'Hello world!'
-      assert WILDCARD_MATCHER.match true
-      assert WILDCARD_MATCHER.match false
-      assert WILDCARD_MATCHER.match nil
-      assert WILDCARD_MATCHER.match [1,2,3,4,5]
-      assert WILDCARD_MATCHER.match({k1: 'v1', k2: 'v2'})
-
       assert_match WILDCARD_MATCHER, 1
       assert_match WILDCARD_MATCHER, 1.1
       assert_match WILDCARD_MATCHER, 'Hello world!'

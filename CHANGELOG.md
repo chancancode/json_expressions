@@ -1,3 +1,7 @@
+### v0.7.3 [view commit logs](https://github.com/chancancode/json_expressions/compare/0.7.2...0.7.3)
+
+* Removed WILDCARD_MATCHER#match and the corresponding test. Since support for Object#match has been removed in v0.7.0, this should no longer be necessary.
+
 ### v0.7.2 [view commit logs](https://github.com/chancancode/json_expressions/compare/0.7.1...0.7.2)
 
 * Bugfix: Corrected a misbehaving require statement in minitest helpers (Fixes #2)

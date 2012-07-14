@@ -15,10 +15,6 @@ module JsonExpressions
     true
   end
 
-  def WILDCARD_MATCHER.match(other)
-    true
-  end
-
   def WILDCARD_MATCHER.to_s
     'WILDCARD_MATCHER'
   end
