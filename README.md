@@ -178,7 +178,7 @@ Furthermore, because the pattern is just plain old Ruby code, you can also write
 
 ### Object Equality
 
-By default, json_expressions uses `Object#===` to match against the corresponding value in the target JSON. In most cases, this method behaves exactly the same as `Object#==`. However, certain classes override this method to provide specialized behavior (notably `Regexp` and `Module`, see below). If you find this undesirable for certain classes, you can explicitly opt them out and json_expressions will call `Object#==` instead:
+By default, json_expressions uses `Object#===` to match against the corresponding value in the target JSON. In most cases, this method behaves exactly the same as `Object#==`. However, certain classes override this method to provide specialized behavior (notably `Regexp`, `Module` and `Range`, see below). If you find this undesirable for certain classes, you can explicitly opt them out and json_expressions will call `Object#==` instead:
 
 ```ruby
 # This is the default setting
@@ -231,6 +231,21 @@ matches the JSON object
   "object": {"key1": "value1", "key2": "value2"},
   "null": null
 }
+```
+
+### Ranges
+
+`Range` overrides `===` to mean `in?`. Therefore,
+```ruby
+{ day: (1..31), month: (1..12) }
+```
+matches the JSON object
+```json
+{ "day": 3, "month": 11 }
+```
+but not
+```json
+{ "day": -1, "month": 13 }
 ```
 
 ### Capturing
