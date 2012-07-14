@@ -297,10 +297,10 @@ will match
 You can change this behavior in a case-by-case manner:
 ```ruby
 {
-  "unordered_array" => [1,2,3,4,5].unordered!, # calling unordered! is optional as it's the default
-  "ordered_array"   => [1,2,3,4,5].ordered!,
-  "unordered_hash"  => {'a'=>1, 'b'=>2}.unordered!,
-  "ordered_hash"    => {'a'=>1, 'b'=>2}.ordered!
+  unordered_array: [1,2,3,4,5].unordered!, # calling unordered! is optional as it's the default
+  ordered_array:   [1,2,3,4,5].ordered!,
+  unordered_hash:  {a: 1, b: 2}.unordered!,
+  ordered_hash:    {a: 1, b: 2}.ordered!
 }
 ```
 
@@ -335,8 +335,8 @@ You can change this behavior in a case-by-case manner:
 {
   strict_array:    [1,2,3,4,5].strict!, # calling strict! is optional as it's the default
   forgiving_array: [1,2,3,4,5].forgiving!,
-  strict_hash:     {'a'=>1, 'b'=>2}.strict!,
-  forgiving_hash:  {'a'=>1, 'b'=>2}.forgiving!
+  strict_hash:     {a: 1, b: 2}.strict!,
+  forgiving_hash:  {a: 1, b: 2}.forgiving!
 }
 ```
 
@@ -345,8 +345,8 @@ They also come with some more sensible aliases:
 {
   strict_array:    [1,2,3,4,5].reject_extra_values!,
   forgiving_array: [1,2,3,4,5].ignore_extra_values!,
-  strict_hash:     {'a'=>1, 'b'=>2}.reject_extra_keys!,
-  forgiving_hash:  {'a'=>1, 'b'=>2}.ignore_extra_keys!
+  strict_hash:     {a: 1, b: 2}.reject_extra_keys!,
+  forgiving_hash:  {a: 1, b: 2}.ignore_extra_keys!
 }
 ```
 
@@ -359,7 +359,7 @@ JsonExpressions::Matcher.assume_strict_hashes = false
 
 ## Support for `MiniTest::Spec` (and other testing frameworks)
 
-The `Matcher` class itself is written in a testing-framework-agnostic manner. This allows you to easily write custom helpers/matchers for your favorite testing framework. `MiniTest::Spec` is on my TODO list, but it is not a high priority for me personally, as I currently don't use it. If you need this now, write it yourself and submit a pull request - it's really easy, I promise (see `lib/json_expressions/minitest/unit/helpers.rb` for inspiration).
+The `Matcher` class itself is written in a testing-framework-agnostic manner. This allows you to easily write custom helpers/matchers for your favorite testing framework. `MiniTest::Spec` is on my TODO list, but it is not a high priority for me personally, as I don't use it myself. If you need this now, write it yourself and submit a pull request - it's really easy, I promise (see `lib/json_expressions/minitest/unit/helpers.rb` for inspiration).
 
 ## Contributing
 
