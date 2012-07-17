@@ -11,7 +11,11 @@ module JsonExpressions
           end
 
           if String === act
-            assert act = JSON.parse(act), "Expected #{pp(act)} to be valid JSON"
+            begin
+              act = JSON.parse(act)
+            rescue
+              assert false, "Expected #{pp(act)} to be valid JSON"
+            end
           end
 
           assert exp =~ act, ->{ "Expected #{pp(exp)} to match #{pp(act)}\n" + exp.last_error}
