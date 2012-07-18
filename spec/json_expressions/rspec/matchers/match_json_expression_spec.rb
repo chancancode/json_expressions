@@ -86,7 +86,9 @@ module JsonExpressions
         }
 
         positive_json_hash.should match_json_expression(@expression)
+        ->{ negative_json_hash.should match_json_expression(@expression) }.should raise_error(::RSpec::Expectations::ExpectationNotMetError)
         negative_json_hash.should_not match_json_expression(@expression)
+        ->{ positive_json_hash.should_not match_json_expression(@expression) }.should raise_error(::RSpec::Expectations::ExpectationNotMetError)
       end
 
       it "works with JSON strings" do
@@ -94,7 +96,9 @@ module JsonExpressions
         negative_json_string = '{"l1_string":"Hello world!","l1_regexp":"0xC0FFEE","l1_boolean":false,"l1_module":1.1,"l1_wildcard":true,"l1_array":["l1: Hello world",1,true,null,false],"l1_object":{"l2_string":"Hi there!","l2_regexp":"1234-5678-1234-5678","l2_boolean":true,"l2_module":[1,2,3,4],"l2_wildcard":"Whatever","l2_array":["l2: Hello world",2,true,null,"Whatever"],"l2_object":{"l3_string":"Good day...","l3_regexp":"","l3_boolean":false,"l3_module":"This is like... inception!","l3_wildcard":null,"l3_array":["***THIS SHOULD BREAK THINGS***",3,true,null,[]]}}}'
 
         positive_json_string.should match_json_expression(@expression)
+        ->{ negative_json_string.should match_json_expression(@expression) }.should raise_error(::RSpec::Expectations::ExpectationNotMetError)
         negative_json_string.should_not match_json_expression(@expression)
+        ->{ positive_json_string.should_not match_json_expression(@expression) }.should raise_error(::RSpec::Expectations::ExpectationNotMetError)
       end
     end
 
