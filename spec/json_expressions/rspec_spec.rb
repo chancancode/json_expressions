@@ -4,8 +4,9 @@ require 'json_expressions/rspec'
 
 describe RSpec do
   it "includes JsonExpressions::RSpec::Matchers" do
-    # TODO actually verify this.
-    # For now this spec verifies the spec helper file loads without errors
-    true.should be_true
+    modules = ::RSpec.configuration.include_or_extend_modules
+    modules.select! { |(mode,mod,_)| mode == :include }
+    modules.map! { |(mode,mod,_)| mod }
+    modules.should include(::JsonExpressions::RSpec::Matchers)
   end
 end
