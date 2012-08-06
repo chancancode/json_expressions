@@ -23,7 +23,6 @@ module JsonExpressions
           # Return the matcher
           return exp
         end
-
       end
     end
   end
