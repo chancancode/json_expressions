@@ -18,7 +18,9 @@ module JsonExpressions
             end
           end
 
-          assert exp =~ act, ->{ "Expected #{pp(exp)} to match #{pp(act)}\n" + exp.last_error}
+          unless exp =~ act
+            assert false, "Expected #{pp(exp)} to match #{pp(act)}\n #{exp.last_error}"
+          end
 
           # Return the matcher
           return exp
