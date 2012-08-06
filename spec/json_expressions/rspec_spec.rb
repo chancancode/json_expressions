@@ -9,4 +9,8 @@ describe RSpec do
     modules.map! { |(mode,mod,_)| mod }
     modules.should include(::JsonExpressions::RSpec::Matchers)
   end
+
+  it "defines wildcard_matcher" do
+    wildcard_matcher.object_id.should equal ::JsonExpressions::WILDCARD_MATCHER.object_id
+  end
 end

@@ -5,4 +5,8 @@ require 'json_expressions/test/unit/helpers'
 class Test::Unit::TestCase
   include JsonExpressions::Test::Unit::Helpers
   WILDCARD_MATCHER = JsonExpressions::WILDCARD_MATCHER
+
+  def wildcard_matcher
+    ::JsonExpressions::WILDCARD_MATCHER
+  end
 end

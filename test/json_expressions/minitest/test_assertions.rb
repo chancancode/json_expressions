@@ -10,22 +10,22 @@ module MiniTest
         l1_regexp:   /\A0x[0-9a-f]+\z/i,
         l1_boolean:  false,
         l1_module:   Numeric,
-        l1_wildcard: WILDCARD_MATCHER,
-        l1_array:    ['l1: Hello world',1,true,nil,WILDCARD_MATCHER],
+        l1_wildcard: wildcard_matcher,
+        l1_array:    ['l1: Hello world',1,true,nil,wildcard_matcher],
         l1_object:   {
           l2_string:   'Hi there!',
           l2_regexp:   /\A[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}\z/i,
           l2_boolean:  true,
           l2_module:   Enumerable,
-          l2_wildcard: WILDCARD_MATCHER,
-          l2_array:    ['l2: Hello world',2,true,nil,WILDCARD_MATCHER],
+          l2_wildcard: wildcard_matcher,
+          l2_array:    ['l2: Hello world',2,true,nil,wildcard_matcher],
           l2_object:   {
             l3_string:   'Good day...',
             l3_regexp:   /\A.*\z/,
             l3_boolean:  false,
             l3_module:   String,
-            l3_wildcard: WILDCARD_MATCHER,
-            l3_array:    ['l3: Hello world',3,true,nil,WILDCARD_MATCHER],
+            l3_wildcard: wildcard_matcher,
+            l3_array:    ['l3: Hello world',3,true,nil,wildcard_matcher],
           }
         }
       }

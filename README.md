@@ -89,8 +89,8 @@ class UsersControllerTest < MiniTest::Unit::TestCase
         type:       'Administrator',
         points:     Fixnum,                      # Any integer value
         homepage:   /\Ahttps?\:\/\/.*\z/i,       # Let's get serious
-        created_at: WILDCARD_MATCHER,            # Don't care as long as it exists
-        updated_at: WILDCARD_MATCHER,
+        created_at: wildcard_matcher,            # Don't care as long as it exists
+        updated_at: wildcard_matcher,
         posts: [
           {
             id:      Fixnum,
@@ -116,6 +116,17 @@ class UsersControllerTest < MiniTest::Unit::TestCase
 
     # You can use the captured values for other purposes
     assert matcher.captures[:user_id] > 0
+  end
+end
+
+# MiniTest::Spec example
+describe UsersController, "#show" do
+  it "returns a user" do
+    pattern = # See above...
+
+    server_response = get '/users/chancancode.json'
+
+    server_response.body.must_match_json_expression(pattern)
   end
 end
 
@@ -160,11 +171,11 @@ matches the JSON object
 
 ### Wildcard Matching
 
-You can use the WILDCARD_MATCHER to ignore keys that you don't care about (other than the fact that they exist).
+You can use `wildcard_matcher` to ignore keys that you don't care about (other than the fact that they exist).
 
 This pattern
 ```ruby
-[ WILDCARD_MATCHER, WILDCARD_MATCHER, WILDCARD_MATCHER, WILDCARD_MATCHER, WILDCARD_MATCHER, WILDCARD_MATCHER, WILDCARD_MATCHER ]
+[ wildcard_matcher, wildcard_matcher, wildcard_matcher, wildcard_matcher, wildcard_matcher, wildcard_matcher, wildcard_matcher ]
 ```
 matches the JSON array
 ```json
@@ -173,8 +184,10 @@ matches the JSON array
 
 Furthermore, because the pattern is just plain old Ruby code, you can also write:
 ```ruby
-[ WILDCARD_MATCHER ] * 7
+[ wildcard_matcher ] * 7
 ```
+
+Note: Previously, the examples here uses `WILDCARD_MATCHER` which is a constant defined on `MiniTest::Unit::TestCase`. Since 0.8.0, the use of this constant is discouraged because it doesn't work for `MiniTest::Spec` and `RSpec` due to how Ruby scoping works for blocks. Instead, `wildcard_matcher` (a method) has been added. This is now the preferred way to retrieve the wildcard matcher in order to maintain consistency among the different test frameworks.
 
 ### Object Equality
 

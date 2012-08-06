@@ -1,6 +1,9 @@
 ### v0.8.0 [view commit logs](https://github.com/chancancode/json_expressions/compare/0.7.3...0.8.0)
 
 * Added Test::Unit support.
+* Added MiniTest::Spec support.
+* BREAKING: Changed internal structure of MiniTest support code. This shouldn't affect you unless you have been manually requiring and including the MiniTest helpers yourself.
+* Use of `WILDCARD_MATCHER` (the constant) inside a `MiniTest::Unit::TestCase` is now discouraged. Instead, you are encouraged to use `wildcard_matcher` (the method) instead. README has been updated.
 
 ### v0.7.3 [view commit logs](https://github.com/chancancode/json_expressions/compare/0.7.2...0.7.3)
 
