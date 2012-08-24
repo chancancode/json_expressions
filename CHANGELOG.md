@@ -1,3 +1,7 @@
+### v0.8.1 [view commit logs](https://github.com/chancancode/json_expressions/compare/0.8.0...0.8.1)
+
+* Fat finger: reverted a change in 0.8.0 which changed the default value of `assume_unordered_arrays` from true to false. Added tests to make sure this never happens again.
+
 ### v0.8.0 [view commit logs](https://github.com/chancancode/json_expressions/compare/0.7.3...0.8.0)
 
 * Added Test::Unit support.

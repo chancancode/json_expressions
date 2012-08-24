@@ -14,7 +14,7 @@ module JsonExpressions
       #   By default, assume arrays are unordered when not specified
       #   Default: true
       attr_accessor :assume_unordered_arrays
-      JsonExpressions::Matcher.assume_unordered_arrays = false
+      JsonExpressions::Matcher.assume_unordered_arrays = true
 
       # JsonExpressions::Matcher.assume_strict_arrays (Boolean)
       #   By default, reject arrays with extra elements when not specified

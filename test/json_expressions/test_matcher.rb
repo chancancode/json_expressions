@@ -50,6 +50,14 @@ module JsonExpressions
       }
     end
 
+    def test_defaults
+      assert_equal [], Matcher.skip_triple_equal_on
+      assert_equal true, Matcher.assume_unordered_arrays
+      assert_equal true, Matcher.assume_strict_arrays
+      assert_equal true, Matcher.assume_unordered_hashes
+      assert_equal true, Matcher.assume_strict_hashes
+    end
+
     def test_match_numbers
       assert_match Matcher.new(1), 1
       assert_match Matcher.new(1.1), 1.1
