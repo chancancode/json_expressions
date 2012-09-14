@@ -227,7 +227,7 @@ but not
   integer: Fixnum,
   float:   Float,
   string:  String,
-  boolean: Boolean,
+  boolean: Boolean, # See http://stackoverflow.com/questions/3028243/check-if-ruby-object-is-a-boolean#answer-3028378
   array:   Array,
   object:  Hash,
   null:    NilClass,
