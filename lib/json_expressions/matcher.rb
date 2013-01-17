@@ -61,7 +61,7 @@ module JsonExpressions
     private
 
     def reset!
-      @last_errot = nil
+      @last_error = nil
       @captures   = {}
     end
 
