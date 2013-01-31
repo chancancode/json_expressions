@@ -50,9 +50,7 @@ module JsonExpressions
       match_json('(JSON ROOT)', @json, other)
     end
 
-    def match(other)
-      self =~ other
-    end
+    alias_method :match, :=~
 
     def to_s
       @json.to_s
