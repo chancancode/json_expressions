@@ -24,6 +24,10 @@ module JsonExpressions
         def failure_message_for_should_not
           "expected #{@target.inspect} not to match JSON expression #{@expected.inspect}"
         end
+
+        def description
+          "should equal JSON expression #{@expected.inspect}"
+        end
       end
 
       def match_json_expression(expected)
