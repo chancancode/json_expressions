@@ -176,17 +176,39 @@ module JsonExpressions
       assert_match Matcher.new(WILDCARD_MATCHER), nil
     end
 
-    def test_capture
-      m = Matcher.new({key1: :capture_me})
-      assert_match m, {key1: 'value1'}
-      assert_equal 'value1', m.captures[:capture_me]
+    def test_match_capture
+      assert_match Matcher.new({key1: :capture1, key2: :capture2}), {key1: 'value1', key2: 'value2'}
     end
 
-    def test_match_capture
-      m = Matcher.new({key1: :capture_me, key2: :capture_me})
-      m =~ {key1: 'value1', key2: 'value1'}
-      assert_match m, {key1: 'value1', key2: 'value1'}
-      refute_match m, {key1: 'value1', key2: 'value2'}
+    def test_match_capture_common
+      assert_match Matcher.new({key1: :common, key2: :common}), {key1: 'value1', key2: 'value1'}
+      refute_match Matcher.new({key1: :common, key2: :common}), {key1: 'value1', key2: 'value2'}
+    end
+
+    def test_capture_result
+      m = Matcher.new({key1: :capture1, key2: :capture2})
+      m =~ {key1: 'value1', key2: 'value2'}
+      assert_equal 'value1', m.captures[:capture1]
+      assert_equal 'value2', m.captures[:capture2]
+    end
+
+    def test_reuse_matcher
+      m = Matcher.new({key1: :capture1})
+
+      assert_nil m.last_error
+      assert_empty m.captures
+
+      assert_match m, {key1: 'value1'}
+      assert_nil m.last_error
+      refute_empty m.captures
+
+      refute_match m, {}
+      refute_nil m.last_error
+      assert_empty m.captures
+
+      assert_match m, {key1: 'value1'}
+      assert_nil m.last_error
+      refute_empty m.captures
     end
 
     def test_match_recursive

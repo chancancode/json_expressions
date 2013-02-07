@@ -2,6 +2,7 @@
 
 * Bugfix: require 'rspec/core' instead of 'rspec' (#12 by @pda)
 * Improved matcher output when using RSpec (#11 by @milkcocoa)
+* Bugfix: fixed a bug where reusing the same matcher sometimes causes false negatives (#10 by @kophyo)
 * Various documentation improvements
 * Various Rakefile improvements. The gem now builds correctly on Travis
 
