@@ -1,4 +1,4 @@
-require 'rspec'
+require 'rspec/core'
 require 'json_expressions'
 require 'json_expressions/rspec/matchers'
 

@@ -1,4 +1,5 @@
 require 'json'
+require 'rspec/core'
 
 module JsonExpressions
   module RSpec
