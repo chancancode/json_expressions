@@ -3,10 +3,6 @@ require 'minitest/spec'
 require 'json_expressions'
 require 'json_expressions/minitest/assertions'
 
-# module MiniTest::Assertions
-#   include JsonExpressions::MiniTest::Assertions
-# end
-
 class MiniTest::Unit::TestCase
   WILDCARD_MATCHER = JsonExpressions::WILDCARD_MATCHER
 

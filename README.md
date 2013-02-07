@@ -385,9 +385,9 @@ JsonExpressions::Matcher.assume_strict_arrays = false
 JsonExpressions::Matcher.assume_strict_hashes = false
 ```
 
-## Support for `MiniTest::Spec` (and other testing frameworks)
+## Support for other test frameworks
 
-The `Matcher` class itself is written in a testing-framework-agnostic manner. This allows you to easily write custom helpers/matchers for your favorite testing framework. `MiniTest::Spec` is on my TODO list, but it is not a high priority for me personally, as I don't use it myself. If you need this now, write it yourself and submit a pull request - it's really easy, I promise (see `lib/json_expressions/minitest/unit/helpers.rb` for inspiration).
+The `Matcher` class itself is written in a framework-agnostic manner. This allows you to easily write custom helpers/matchers for your favorite testing framework. If you wrote an adapter for another test frameworks and you'd like to share yhat with the world, please open a Pull Request.
 
 ## Contributing
 
