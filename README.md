@@ -1,6 +1,8 @@
 JSON Expressions
 ================
 
+[![Build Status](https://travis-ci.org/chancancode/json_expressions.png?branch=master)](https://travis-ci.org/chancancode/json_expressions)
+
 ## Introduction
 
 Your API is a contract between your service and your developers. It is important for you to know exactly what your JSON API is returning to the developers in order to make sure you don't accidentally change things without updating the documentations and/or bumping the API version number. Perhaps some controller tests for your JSON endpoints would help:
