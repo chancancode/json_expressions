@@ -263,6 +263,19 @@ but not
 { "day": -1, "month": 13 }
 ```
 
+This is also helpful for comparing Floats to a certain precision.
+```ruby
+{ day: 3.141593 }
+```
+won't match
+```json
+{ "pi": 3.1415926536 }
+```
+But this will:
+```ruby
+{ pi: (3.141592..3.141593) }
+```
+
 ### Capturing
 
 Similar to how "captures" work in Regexp, you can capture the value of certain keys for later use:
