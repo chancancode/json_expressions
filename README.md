@@ -265,7 +265,7 @@ but not
 
 This is also helpful for comparing Floats to a certain precision.
 ```ruby
-{ day: 3.141593 }
+{ pi: 3.141593 }
 ```
 won't match
 ```json
