@@ -1,3 +1,5 @@
+### v1.0.0 (Unreleased) [view commit logs](https://github.com/chancancode/json_expressions/compare/1.0-dev...0.8.2)
+
 ### v0.8.2 [view commit logs](https://github.com/chancancode/json_expressions/compare/0.8.1...0.8.2)
 
 * Bugfix: require 'rspec/core' instead of 'rspec' (#12 by @pda)
