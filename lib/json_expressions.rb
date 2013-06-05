@@ -18,4 +18,8 @@ module JsonExpressions
   def WILDCARD_MATCHER.to_s
     'WILDCARD_MATCHER'
   end
+
+  def WILDCARD_MATCHER.inspect
+    'WILDCARD_MATCHER'
+  end
 end

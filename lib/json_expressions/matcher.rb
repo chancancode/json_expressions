@@ -56,6 +56,8 @@ module JsonExpressions
       @json.to_s
     end
 
+    alias_method :inspect, :to_s
+
     private
 
     def reset!
