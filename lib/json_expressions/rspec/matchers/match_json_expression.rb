@@ -17,6 +17,7 @@ module JsonExpressions
           @target = (String === target) ? JSON.parse(target) : target
           @expected =~ @target
         end
+        alias_method :===, :matches?
 
         def failure_message_for_should
           "expected #{@target.inspect} to match JSON expression #{@expected.inspect}\n" + @expected.last_error
