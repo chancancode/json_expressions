@@ -3,11 +3,21 @@ require 'minitest/spec'
 require 'json_expressions'
 require 'json_expressions/minitest/assertions'
 
-class MiniTest::Unit::TestCase
-  WILDCARD_MATCHER = JsonExpressions::WILDCARD_MATCHER
+if defined?(MiniTest::VERSION) && (MiniTest::VERSION.to_i > 4)
+  class MiniTest::Test
+    WILDCARD_MATCHER = JsonExpressions::WILDCARD_MATCHER
 
-  def wildcard_matcher
-    ::JsonExpressions::WILDCARD_MATCHER
+    def wildcard_matcher
+      ::JsonExpressions::WILDCARD_MATCHER
+    end
+  end
+else
+  class MiniTest::Unit::TestCase
+    WILDCARD_MATCHER = JsonExpressions::WILDCARD_MATCHER
+
+    def wildcard_matcher
+      ::JsonExpressions::WILDCARD_MATCHER
+    end
   end
 end
 
