@@ -124,11 +124,11 @@ module JsonExpressions
         other = other.clone
 
         matcher.all? do |v1|
-          if i = other.find_index { |v2| match_json(nil, v1, v2) }
+          if i = other.find_index { |v2| match_json(make_path(path, '*'), v1, v2) }
             other.delete_at i
             true
           else
-            set_last_error path, "%path% does not contain an element matching #{v1.inspect}"
+            set_last_error path, "%path% does not contain a matching element for #{v1.inspect} - #{last_error}"
             false
           end
         end
