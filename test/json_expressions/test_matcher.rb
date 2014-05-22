@@ -305,7 +305,14 @@ module JsonExpressions
     def test_error_array_unordered_no_match
       m = Matcher.new([1,2,3,4,5].unordered!)
       m =~ [1,2,3,4,6]
-      assert_equal '(JSON ROOT) does not contain an element matching 5', m.last_error
+      assert_equal '(JSON ROOT) does not contain a matching element for 5 - At (JSON ROOT).*: expected 5 to match 6', m.last_error
+    end
+
+    def test_array_with_hash_inside
+      m = Matcher.new([{foo: 'bar'}])
+      m =~ [{}]
+
+      assert_equal "(JSON ROOT) does not contain a matching element for #{{foo: 'bar'}} - (JSON ROOT).* does not contain the key foo", m.last_error
     end
 
     def test_error_not_a_hash
