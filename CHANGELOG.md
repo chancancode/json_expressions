@@ -1,3 +1,10 @@
+### v0.8.3 [view commit logs](https://github.com/chancancode/json_expressions/compare/0.8.2...0.8.3)
+
+* Print more detailed error message when matching arrays (#26 from @Maxim-Filimonov)
+* Add support for rspec 3+ (#24 from @george)
+* Minitest 5 compat (#21 from @ffmike)
+* Support using match_json_expression as an argument matcher for rspec. (#17 by @cupakromer)
+
 ### v0.8.2 [view commit logs](https://github.com/chancancode/json_expressions/compare/0.8.1...0.8.2)
 
 * Bugfix: require 'rspec/core' instead of 'rspec' (#12 by @pda)
