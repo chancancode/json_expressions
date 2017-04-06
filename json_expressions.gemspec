@@ -4,7 +4,7 @@ $:.unshift lib unless $:.include?(lib)
 
 Gem::Specification.new do |s|
   s.name        = "json_expressions"
-  s.version     = "0.8.3"
+  s.version     = "0.9.0"
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Godfrey Chan"]
   s.email       = ["godfreykfc@gmail.com"]

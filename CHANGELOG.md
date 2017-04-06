@@ -1,3 +1,7 @@
+### v0.9.0 [view commit logs](https://github.com/chancancode/json_expressions/compare/0.8.3...0.9.0)
+
+* Support for unified Integer class in Ruby 2.4+ (#39 from @iamliamnorton)
+
 ### v0.8.3 [view commit logs](https://github.com/chancancode/json_expressions/compare/0.8.2...0.8.3)
 
 * Print more detailed error message when matching arrays (#26 from @Maxim-Filimonov)
