@@ -172,7 +172,7 @@ module JsonExpressions
 
     def make_path(path, segment)
       if path
-        segment.is_a?(Fixnum) ? path + "[#{segment}]" : path + ".#{segment.to_s}"
+        segment.is_a?(0.class) ? path + "[#{segment}]" : path + ".#{segment.to_s}"
       end
     end
 

@@ -22,19 +22,19 @@ class UsersControllerTest < MiniTest::Unit::TestCase
     assert_equal 'Godfrey Chan', user['full_name']
     assert_equal 'godfrey@example.com', user['email']
     assert_equal 'Administrator', user['type']
-    assert_kind_of Fixnum, user['points']
+    assert_kind_of Integer, user['points']
     assert_match /\Ahttps?\:\/\/.*\z/i, user['homepage']
 
     assert posts = user['posts']
 
-    assert_kind_of Fixnum, posts[0]['id']
+    assert_kind_of Integer, posts[0]['id']
     assert_equal 'Hello world!', posts[0]['subject']
     assert_equal user_id, posts[0]['user_id']
     assert_include posts[0]['tags'], 'announcement'
     assert_include posts[0]['tags'], 'welcome'
     assert_include posts[0]['tags'], 'introduction'
 
-    assert_kind_of Fixnum, posts[1]['id']
+    assert_kind_of Integer, posts[1]['id']
     assert_equal 'An awesome blog post', posts[1]['subject']
     assert_equal user_id, posts[1]['user_id']
     assert_include posts[0]['tags'], 'blog'
@@ -89,13 +89,13 @@ class UsersControllerTest < MiniTest::Unit::TestCase
         full_name:  'Godfrey Chan',
         email:      'godfrey@example.com',
         type:       'Administrator',
-        points:     Fixnum,                      # Any integer value
+        points:     Integer,                     # Any integer value
         homepage:   /\Ahttps?\:\/\/.*\z/i,       # Let's get serious
         created_at: wildcard_matcher,            # Don't care as long as it exists
         updated_at: wildcard_matcher,
         posts: [
           {
-            id:      Fixnum,
+            id:      Integer,
             subject: 'Hello world!',
             user_id: :user_id,                   # Match against the captured value
             tags: [
@@ -105,7 +105,7 @@ class UsersControllerTest < MiniTest::Unit::TestCase
             ]                                    # Ordering of elements does not matter by default
           }.ignore_extra_keys!,                  # Skip the uninteresting stuff
           {
-            id:      Fixnum,
+            id:      Integer,
             subject: 'An awesome blog post',
             user_id: :user_id,
             tags:    ['blog' , 'life']
@@ -226,7 +226,7 @@ but not
 `Module` (and by inheritance, `Class`) overrides `===` to mean `instance of`. You can exploit this behavior to do type matching:
 ```ruby
 {
-  integer: Fixnum,
+  integer: Integer,
   float:   Float,
   string:  String,
   boolean: Boolean, # See http://stackoverflow.com/questions/3028243/check-if-ruby-object-is-a-boolean#answer-3028378
